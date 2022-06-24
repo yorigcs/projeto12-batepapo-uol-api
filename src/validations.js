@@ -1,17 +1,21 @@
 import Joi from 'joi';
 
 const schema = Joi.object({
-    username: Joi.string()
-        .empty()
+    username: Joi.string().empty(),
+    to: Joi.string().empty(),
+    text: Joi.string().empty(),
+    type: Joi.any().valid('message','private_message')
 })
 
-const validations = async (object) => {
+const isValid = async (object) => {
+    let isValid = true
     try {
         await schema.validateAsync(object)
     } catch (err) {
-        throw 422;
+        isValid = false;
+        //console.log(err);
     }
-
+    return isValid;
 };
 
-export default validations;
+export default isValid;
