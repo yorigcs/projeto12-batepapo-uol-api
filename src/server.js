@@ -122,5 +122,27 @@ server.post('/status', async (req, res) => {
 
 });
 
+setInterval(async () => {
+    const seconds = Date.now() - 10000;
+    try {
+        const OfflineParticipants = await mongoDB.collection("participants").find({ lastStatus: { $lte: seconds } }).toArray();
+        if(OfflineParticipants.length === 0) return;
+
+        const messages = OfflineParticipants.map(OffPaticipant => {
+            return {
+                from: OffPaticipant.name,
+                to: 'Todos',
+                text: 'Sai da sala...',
+                time: dayjs().format('HH:MM:ss')
+            }
+        })
+        
+        await mongoDB.collection("messages").insertMany(messages);
+        await mongoDB.collection("participants").deleteMany({lastStatus: { $lte: seconds } });
+    } catch (err) {
+        console.log(err);
+    }
+}, 15000);
+
 server.listen(process.env.PORT, () => console.log('listening on port ' + process.env.PORT));
 
