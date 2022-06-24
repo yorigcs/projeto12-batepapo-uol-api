@@ -36,7 +36,7 @@ server.post('/participants', async (req, res) => {
 
     } catch (err) {
         console.log(err)
-        res.sendStatus(err);
+        res.sendStatus(400);
     } finally {
         await MongoClose();
     }
@@ -50,7 +50,8 @@ server.get('/participants', async (req, res) => {
         const listParticipants = await participants.find({}).toArray();
         res.send(listParticipants);
     } catch (err) {
-
+        console.log(err)
+        res.sendStatus(400);
     }
 })
 
